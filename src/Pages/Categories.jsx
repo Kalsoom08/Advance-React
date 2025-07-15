@@ -1,35 +1,36 @@
-import React from 'react'
-import { getProducts } from '../API/api'
-import { useQuery } from '@tanstack/react-query'
+import React, { useContext } from 'react';
+import { ProductsContext } from '../Context/productContext';
 
-export const Categories = ({ onCategorySelect }) => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['products'],
-    queryFn: getProducts,
-  })
+export const Categories = ({onCategorySelect}) => {
+  const {products,isLoading, error} = useContext(ProductsContext)
+  if(isLoading) return <p>Loading....</p>
+  if(error) return <p>{error.message}</p>
 
-  if (isLoading) return <p>Loading...</p>
-  if (error) return <p>Error fetching categories...</p>
+  const uniqueCategory = [...new Set(products.map((item)=>(
+    item.category
+  )))]
 
-  const uniqueCategories = [...new Set(data.map(item => item.category))]
-  const getFirstCapitalizedWord = (str) => {
-  const firstWord = str.split(' ')[0];
-  return firstWord.charAt(0).toUpperCase() + firstWord.slice(1);
-};
+  const capitalizeWord = (str)=>{
+   const firstWord = str.split(' ')[0]
+   return firstWord.charAt(0).toUpperCase() + firstWord.slice(1)
+  }
 
 
+  
   return (
     <div>
-      <h2>Categories</h2>
-      <button onClick={() => onCategorySelect(null)}>All Products</button>
+      <button onClick={() => onCategorySelect (null)}>All Products</button>
       <ul>
-        {uniqueCategories.map((category, index) => (
-          <li key={index}>
-            <button 
-            onClick={() => onCategorySelect(category)} >{getFirstCapitalizedWord(category)}</button>
-          </li>
-        ))}
+        {
+          uniqueCategory.map((category, index)=>{
+            return(
+              <li key={index} onClick={(()=> onCategorySelect(category))}>
+                <h1>{capitalizeWord(category)}</h1>
+              </li>
+            )
+          })
+        }
       </ul>
     </div>
-  )
-}
+  );
+};

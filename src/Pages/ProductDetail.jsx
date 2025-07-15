@@ -1,25 +1,26 @@
-import React from 'react'
+import React, { useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getProductByID} from '../API/api';
+import { ProductsContext } from '../Context/productContext';
 
 export const ProductDetail = () => {
-  const {id} = useParams()
-  const {data, isLoading, error} = useQuery({
-    queryKey: ["products", id],
-    queryFn:()=> getProductByID(id)
-  })
+  const { id } = useParams();
+  const { products } = useContext(ProductsContext);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (!products || !products.length) return <p>Loading...</p>;
+
+  const product = products.find((item) => item.id === parseInt(id));
+
+  if (!product) return <p>Product not found.</p>;
+
   return (
     <div>
-      <h2>{data.title}</h2>
-      <img src={data.image} alt={data.title}  />
-      <p>Category: {data.category}</p>
-      <p>Price: ${data.price}</p>
-      <p>Rating: {data.rating.rate}</p>
-     <p>Description: {data.description}</p>
+      <h2>{product.title}</h2>
+      <img src={product.image} alt={product.title} />
+      <p>Category: {product.category}</p>
+      <p>Price: ${product.price}</p>
+      <p>Rating: {product.rating.rate}</p>
+      <p>Remaining Products : {product.rating.count}</p>
+      <p>Description: {product.description}</p>
     </div>
-  )
-}
+  );
+};
