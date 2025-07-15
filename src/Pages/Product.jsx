@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 export const Product = ({selectedCategory})=>{
   const {products, isLoading, error} = useContext(ProductsContext)
+  console.log(products)
   if (isLoading) return <p>Loading .....</p>
   if(error) return <p>{error.message}</p>
   
@@ -20,7 +21,7 @@ export const Product = ({selectedCategory})=>{
                <h1>{item.title}</h1>
                 <h4>Category: {item.category}</h4>
                <p>Price: ${item.price}</p>
-               <img src={item.image} alt={item.title} width="100" />
+               <img src={item.fileUrl} alt={item.title} width="100" />
                <Link to={`/productDetail/${item.id}`}>Product Detail</Link>
         </li>
         )
